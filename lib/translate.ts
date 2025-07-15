@@ -1,8 +1,6 @@
-// lib/manualTranslate.ts
-
 import { englishToUrduDict } from "@/lib/translateDic";
 
-export function TranslateSummary(input: any) {
+export function TranslateSummary(input: string) {
   const sentence = String(input);
   return sentence
     .split(/\s+/)
