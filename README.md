@@ -47,9 +47,8 @@ A full-stack web application that takes a blog URL, scrapes the content, summari
 3. **Add environment variables**
 
    > - MONGODB_URI=your_mongodb_connection_string
-   > - SUPABASE_URL=your_supabase_url
-   > - SUPABASE_KEY=your_supabase_anon_or_service_role_key
-   > - HUGGINGFACE_API_TOKEN=your_huggingface_token
+   > - DIRECT_DATABASE_URL=your_supabase_url
+   > - HUGGINHG_FACE_API_KEY=your_huggingface_token
    
 5. **Run Development Server**
    ```bash
