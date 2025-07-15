@@ -36,7 +36,7 @@ export default function Home() {
       setResult(scraped);
       setScrapeLoading(false);
 
-      const Store_Full_Blog = await fetch("/api/storeFullBlog", {
+      const Store_Full_Blog = await fetch(`${location.href}/api/storeFullBlog`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,7 +52,7 @@ export default function Home() {
       setSummary(summarizedText);
       setSummarizeLoading(false);
 
-      const Store_Summary = await fetch("/api/storeSummary", {
+      const Store_Summary = await fetch(`${location.href}/api/storeSummary`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
