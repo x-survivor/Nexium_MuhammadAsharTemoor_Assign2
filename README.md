@@ -57,3 +57,23 @@ A full-stack web application that takes a blog URL, scrapes the content, summari
 # Live App
 
     https://nexium-muhammad-ashar-temoor-assign-pied.vercel.app/
+
+## 📌 After-Deadline Update (Submitted: July 15, 11:59 PM)
+
+> ⏱️ These updates were made after the official deadline to resolve critical deployment issues and improve stability. All core features were implemented and submitted on time.
+
+### ✅ 1. MongoDB Connection Error on Vercel
+
+- **Problem:** MongoDB connection was failing on Vercel with the error:
+- **Reason:** MongoDB Atlas was **blocking incoming connections** from Vercel because only public IP address of my computer had been whitelisted.
+- **Fix:** Added `0.0.0.0/0` to the **Network Access IP whitelist** in MongoDB Atlas. This allowed external services (like Vercel) to connect successfully.
+
+---
+
+### ✅ 2. API Route Crashed on Vercel Deployment
+
+- **Problem:** The API route that connects to MongoDB was crashing on Vercel with runtime errors.
+- **Reason:** Vercel's **Edge Runtime** (default for API routes in `app/`) does **not support MongoDB Node.js driver**.
+- **Fix:** Explicitly added this line at the top of the API file to force Node.js runtime:
+```ts
+export const runtime = "nodejs";
