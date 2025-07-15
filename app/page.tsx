@@ -3,36 +3,56 @@ import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { storeData } from "@/lib/insert";
+import { Input } from "@/components/ui/input";
 
-async function summarize(url: string){
+async function summarize(url: string) {
   const fetchSummary = await fetch(`/api`, {
     method: "POST",
     body: JSON.stringify({
       url: url,
     }),
-  })
+  });
   const response = await fetchSummary.json();
   return response;
 }
 
 export default function Home() {
-  const [result, setResult] = useState<string | null>(null);
+  const [Url, setUrl] = useState("");
+  const [result, setResult] = useState({
+    url: "",
+    title: "",
+    content: "",
+    metaDescription: "",
+    author: "",
+    publishDate: "",
+    wordCount: 0,
+    readingTime: 0,
+  });
 
-  const url = "https://www.sparringmind.com/successful-blogs/";
-  useEffect(() => {
-    async function fetchData() {
-      const summary = await summarize(url);
-      setResult(summary);
-      console.log(summary)
-    }
-    fetchData();
-  }, [url]);
-  
+  async function fetchData() {
+    const summary = await summarize(Url);
+    setResult(summary);
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUrl(e.target.value);
+  };
   return (
-    <div>
+    <div className="min-h-screen overflow-hidden p-10">
       <Toaster richColors />
-      <Button onClick={() => toast.info("Button Clicked")}> Show Toast </Button>
+      <div>
+        <Input
+          id="url"
+          type="text"
+          name="url"
+          value={Url}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="w-1/3 overflow-y-scroll h-[75vh]">
+        <p className="text-sm">{result.content}</p>
+      </div>
+      <Button onClick={fetchData}> Summarize </Button>
     </div>
   );
 }
