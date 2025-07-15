@@ -23,27 +23,62 @@ export default function Home() {
     readingTime: 0,
   });
 
+  const [scrapeLoading, setScrapeLoading] = useState(false);
+  const [summarizeLoading, setSummarizeLoading] = useState(false);
+  const [translateLoading, setTranslateLoading] = useState(false);
+
   async function fetchData() {
-    const scraped = await scrape(Url);
-    setResult(scraped);
-    const Store_Full_Blog = await fetch("/api/storeFullBlog", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: scraped.content,
-      }),
-    });
+    setScrapeLoading(true);
+    setSummary("");
+    setTranslated("");
+    try {
+      const scraped = await scrape(Url);
+      setResult(scraped);
+      setScrapeLoading(false);
 
-    const Mongo_Insert_response = await Store_Full_Blog.json();
-    toast.success("Blog is stored at " + Mongo_Insert_response._id);
+      const Store_Full_Blog = await fetch("/api/storeFullBlog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: scraped.content,
+        }),
+      });
 
-    const summarizedText = await Summarize(scraped.content);
-    setSummary(summarizedText);
+      const Mongo_Insert_response = await Store_Full_Blog.json();
+      toast.success("Blog is stored at " + Mongo_Insert_response._id);
+
+      setSummarizeLoading(true);
+      const summarizedText = await Summarize(scraped.content);
+      setSummary(summarizedText);
+      setSummarizeLoading(false);
+
+      const Store_Summary = await fetch("/api/storeSummary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          summary: summarizedText,
+        }),
+      });
+      const Summary_Insert_Response = await Store_Summary.json();
+      toast.success(Summary_Insert_Response.id);
+    } catch (error) {
+      setScrapeLoading(false);
+      setSummarizeLoading(false);
+      toast.error("An error occurred.");
+    }
   }
-  function translate(){
-    const response = TranslateSummary(summary);
-    setTranslated(response);
+
+  async function translate() {
+    setTranslateLoading(true);
+    try {
+      const response = await TranslateSummary(summary);
+      setTranslated(response);
+    } catch {
+      toast.error("Translation failed.");
+    }
+    setTranslateLoading(false);
   }
+
   function validateURL() {
     try {
       new URL(Url);
@@ -75,7 +110,7 @@ export default function Home() {
             onChange={handleChange}
             placeholder="Enter Blog URL"
           />
-          <Button onClick={validateURL}> Summarize </Button>
+          <Button onClick={validateURL} disabled={scrapeLoading || summarizeLoading}> {scrapeLoading || summarizeLoading ? "Loading..." : "Summarize"} </Button>
         </div>
       </div>
 
@@ -83,23 +118,35 @@ export default function Home() {
         <div className="w-1/2 h-[75vh] overflow-hidden backdrop-blur-xl shadow-2xl p-7 rounded-2xl border-2 flex flex-col gap-5 border-red-300">
           <span className="text-xl font-bold flex flex-col">Full Blog:</span>
           <div className="h-11/12 overflow-y-scroll scrollbar-hide">
-            <p className="text-sm">{result.content}</p>
+            {scrapeLoading ? (
+              <p className="text-sm text-gray-400">Scraping blog...</p>
+            ) : (
+              <p className="text-sm">{result.content}</p>
+            )}
           </div>
         </div>
         <div className="w-1/2 flex flex-col justify-center items-center h-[75vh] gap-y-10">
           <div className="w-full h-1/2 overflow-hidden backdrop-blur-xl shadow-2xl p-7 rounded-2xl border-2 flex flex-col gap-5 border-red-300">
             <span className="text-xl font-bold flex flex-col">Summary:</span>
             <div className="h-11/12 overflow-y-scroll scrollbar-hide">
-              <p className="text-sm">{summary}</p>
+              {summarizeLoading ? (
+                <p className="text-sm text-gray-400">Summarizing...</p>
+              ) : (
+                <p className="text-sm">{summary}</p>
+              )}
             </div>
           </div>
           <div className="w-full h-1/2 overflow-y-scroll scrollbar-hide backdrop-blur-xl shadow-2xl p-7 rounded-2xl border-2 flex flex-col gap-5 border-red-300">
             <span className="text-xl font-bold flex justify-between">
               Translation:
-              <Button onClick={translate}>Translate</Button>
+              <Button onClick={translate} disabled={translateLoading || !summary}>{translateLoading ? "Translating..." : "Translate"}</Button>
             </span>
             <div className="h-11/12 overflow-y-scroll scrollbar-hide">
-              <p className="text-sm">{translated}</p>
+              {translateLoading ? (
+                <p className="text-sm text-gray-400">Translating...</p>
+              ) : (
+                <p className="text-sm">{translated}</p>
+              )}
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-// app/api/store-full-blog/route.ts
 import { NextResponse } from "next/server";
 import { storeData } from "@/lib/insert";
 
