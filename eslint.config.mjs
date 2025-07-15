@@ -9,8 +9,21 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [
+export default [
+  // ✅ Ignore Prisma generated files completely
+  {
+    ignores: ["lib/generated/**/*"],
+  },
+
+  // ✅ Or (alternative) allow them, but disable specific rules
+  // {
+  //   files: ["lib/generated/**/*"],
+  //   rules: {
+  //     "@typescript-eslint/no-unused-vars": "off",
+  //     "@typescript-eslint/no-require-imports": "off",
+  //   },
+  // },
+
+  // ✅ Your main ESLint rules from Next.js
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
-
-export default eslintConfig;

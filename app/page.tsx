@@ -64,7 +64,7 @@ export default function Home() {
     } catch (error) {
       setScrapeLoading(false);
       setSummarizeLoading(false);
-      toast.error("An error occurred.");
+      toast.error("An error occurred: " + error);
     }
   }
 
@@ -84,7 +84,7 @@ export default function Home() {
       new URL(Url);
       setUrl(Url);
       fetchData();
-    } catch {
+    } catch  {
       setUrl(Url);
       toast.error("Please enter a valid URL.");
     }
