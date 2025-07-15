@@ -93,8 +93,10 @@ function extractContent(document: Document): string {
     ".social-share",
     ".related-posts",
     ".below-comment-form",
+    ".container .customcontainer",
     ".sidebar-blog",
     "img",
+    ".twitter-tweet"
   ];
 
   unwantedSelectors.forEach((selector) => {
